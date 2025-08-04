@@ -6,6 +6,7 @@ pub struct CreateOrder{
     pub quantity: f64,
     pub user_id: String,
     pub side: Side,
+    pub order_type: OrderType
 }
 
 #[derive(Debug,Serialize,Deserialize,Clone)]
@@ -34,4 +35,10 @@ pub struct DeleteOrderResponse{
     pub filled_quantity:f64,
     pub remaining_quantity:f64,
     pub average_price:f64,
+}
+
+#[derive(Debug,Serialize,Deserialize,Clone)]
+pub enum OrderType{
+    Limit,
+    Market
 }
