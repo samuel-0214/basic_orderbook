@@ -1,6 +1,6 @@
 use std::{cmp::Reverse, collections::BTreeMap, vec};
 use serde::{Deserialize,Serialize};
-use crate::types::{CreateOrder, CreateOrderResponse, DeleteOrder, DeleteOrderResponse, OrderType, Side};
+use crate::types::{CreateOrder, CreateOrderResponse, DeleteOrder, DeleteOrderResponse, OrderType, Side, Trade};
 use ordered_float::OrderedFloat;
 
 #[derive(Clone)]
@@ -17,6 +17,7 @@ pub struct OrderBook{
     pub bids: BTreeMap<Reverse<OrderedFloat<f64>>, Vec<OpenOrder>>,
     pub asks: BTreeMap<OrderedFloat<f64>, Vec<OpenOrder>>,
     pub order_id_index: u64,
+    pub trades: Vec<Trade>,
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -33,7 +34,7 @@ pub struct DepthResponse{
 
 impl Default for OrderBook{
     fn default() -> Self {
-        Self { bids: BTreeMap::new(), asks: BTreeMap::new(), order_id_index: 0 }
+        Self { bids: BTreeMap::new(), asks: BTreeMap::new(), order_id_index: 0, trades: vec![], }
     }
 }
 
@@ -171,6 +172,15 @@ fn match_market_buy(&mut self,mut quantity:f64, user_id: &str) -> f64{
             order.filled_quantity += trade_qty;
             quantity -= trade_qty;
             filled += trade_qty;
+
+            let trade = Trade{
+                price: price.into_inner(),
+                quantity: trade_qty,
+                buyer_id: user_id.to_string(),
+                seller_id: order.user_id.clone(),
+                timestamp: chrono::Utc::now().timestamp() as u64
+            };
+            self.trades.push(trade);
 
              println!(
                 "TRADE: {} bought {} @ {} from {}",

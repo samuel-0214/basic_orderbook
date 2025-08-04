@@ -42,3 +42,12 @@ pub enum OrderType{
     Limit,
     Market
 }
+
+#[derive(Debug,Serialize,Deserialize,Clone)]
+pub struct Trade{
+    pub price: f64,
+    pub quantity: f64,
+    pub buyer_id: String,
+    pub seller_id: String,
+    pub timestamp: u64,
+}

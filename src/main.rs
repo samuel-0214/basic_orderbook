@@ -16,6 +16,7 @@ async fn main() -> std::io::Result<()>{
             .service(routes::create_order)
             .service(routes::delete_order)
             .service(routes::get_depth)
+            .service(routes::get_trade)
     }        
     )
     .bind("127.0.0.1:8080")?
